@@ -1,0 +1,13 @@
+#!/bin/sh
+
+ENV=$1
+ENV_FILE=.env.$ENV
+DBNAME=mci-$ENV
+
+echo "MCI_PUBLIC_KEY=X" >> $ENV_FILE
+echo "MCI_PRIVATE_KEY=X" >> $ENV_FILE
+echo "DATABASE_URL=postgres:///$DBNAME?sslmode=disable" >> $ENV_FILE
+
+createdb $DBNAME
+cat db/schema.sql | psql -d $DBNAME
+bin/test

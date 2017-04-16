@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export $(cat .env.test)
+
+echo "DELETE FROM users" | psql $DATABASE_URL
+echo "DELETE FROM comics" | psql $DATABASE_URL
+echo "DELETE FROM series" | psql $DATABASE_URL
+echo "DELETE FROM user_series" | psql $DATABASE_URL
+cat db/schema.sql | psql $DATABASE_URL
+
+go test -v ./...
