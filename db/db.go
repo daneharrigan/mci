@@ -27,6 +27,8 @@ func init() {
 	}
 }
 
+type AllHandler func(*sql.Rows)
+
 type Record interface {
 	Values() []interface{}
 	Columns() []string
@@ -129,4 +131,21 @@ func touch(m interface{}) {
 
 	f = v.FieldByName("UpdatedAt")
 	f.Set(now)
+}
+
+func all(m Record, f AllHandler) error {
+	columns := strings.Join(m.Columns(), ", ")
+	query := fmt.Sprintf("SELECT %s FROM %q ORDER BY created_at",
+		columns, m.TableName())
+	rows, err := db.Query(query)
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		defer rows.Close()
+		f(rows)
+	}()
+
+	return nil
 }

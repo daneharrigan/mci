@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"strings"
@@ -21,6 +22,21 @@ func (m *User) Update() error {
 
 func (m *User) Destroy() error {
 	return destroy(m)
+}
+
+func (m *User) All() (<-chan *User, error) {
+	ch := make(chan *User)
+	f := func(rows *sql.Rows) {
+		for rows.Next() {
+			user := new(User)
+			rows.Scan(user.Values()...)
+			ch <- user
+		}
+
+		close(ch)
+	}
+
+	return ch, all(m, f)
 }
 
 func (m *User) Comics(startedAt, endedAt time.Time) ([]*Comic, error) {
