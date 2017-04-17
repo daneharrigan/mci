@@ -50,8 +50,11 @@ func receiver(ch <-chan *db.User) {
 
 func handle(user *db.User) {
 	defer wg.Done()
-	var startedAt time.Time
-	endedAt := time.Now()
+
+	now := time.Now()
+	startedAt := findDate(now, time.Monday, -24)
+	endedAt := findDate(now, time.Sunday, 24)
+
 	comics, err := user.Comics(startedAt, endedAt)
 	if err != nil {
 		log.Printf("fn=Comics error=%q", err)
@@ -68,4 +71,17 @@ func handle(user *db.User) {
 		log.Printf("fn=Send error=%q", err)
 		return
 	}
+}
+
+func findDate(t time.Time, day time.Weekday, offset time.Duration) time.Time {
+	for {
+		if t.Weekday() == day {
+			break
+		}
+
+		t = t.Add(offset * time.Hour)
+	}
+
+	hrs := time.Duration(-t.Hour()) * time.Hour
+	return t.Truncate(time.Hour).Add(hrs)
 }
