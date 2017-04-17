@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"runtime"
 	"sync"
 	"time"
@@ -26,8 +27,13 @@ func main() {
 		go receiver(ch)
 	}
 
-	users := new(db.Users)
-	for user := range users.All() {
+	user := new(db.User)
+	all, err := user.All()
+	if err != nil {
+		log.Printf("fn=All error=%q", err)
+		os.Exit(1)
+	}
+	for user := range all {
 		log.Printf("user=%q", user.Email)
 		wg.Add(1)
 		ch <- user
