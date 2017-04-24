@@ -54,7 +54,7 @@ func (m *User) Comics(startedAt, endedAt time.Time) ([]*Comic, error) {
 		JOIN users ON users.id = user_series.user_id
 		WHERE
 			users.id = $1 AND
-			comics.released_at BETWEEN $2 AND $3`,
+			comics.created_at BETWEEN $2 AND $3`,
 		strings.Join(columns, ", "))
 
 	if cfg.Debug {
