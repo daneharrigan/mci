@@ -66,11 +66,11 @@ func receiver(ch <-chan scanner.Result) {
 func handle(r scanner.Result) {
 	defer wg.Done()
 	comic := new(db.Comic)
-	if err := comic.FindBy("name", r.Title); err != nil {
-		if !db.IsNotFound(err) {
-			log.Printf("fn=FindBy error=%q", err)
-			return
-		}
+	if err := comic.FindBy("name", r.Title); err == nil {
+		return
+	} else if !db.IsNotFound(err) {
+		log.Printf("fn=FindBy error=%q", err)
+		return
 	}
 
 	series := new(db.Series)
