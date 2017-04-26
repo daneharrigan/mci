@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -63,8 +62,7 @@ func (n *notifier) Send() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("params=%s", q.Encode())
-	io.Copy(os.Stdout, res.Body)
+
 	if res.StatusCode != http.StatusOK {
 		return errors.New(http.StatusText(res.StatusCode))
 	}
