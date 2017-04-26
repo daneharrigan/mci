@@ -59,12 +59,12 @@ func handle(user *db.User) {
 		return
 	}
 
+	log.Printf("fn=Send user=%q comics=%d earliest_at=%v", user.Email, len(comics), earliestAt)
 	if len(comics) == 0 {
 		return
 	}
 
 	n := notifier.New(user, comics)
-	log.Printf("fn=Send email=%q", user.Email)
 	if err := n.Send(); err != nil {
 		log.Printf("fn=Send error=%q", err)
 		return
