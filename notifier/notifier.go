@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/daneharrigan/mci/config"
 	"github.com/daneharrigan/mci/db"
