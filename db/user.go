@@ -39,7 +39,7 @@ func (m *User) All() (<-chan *User, error) {
 	return ch, all(m, f)
 }
 
-func (m *User) Comics(startedAt, endedAt time.Time) ([]*Comic, error) {
+func (m *User) Comics(earliestAt time.Time) ([]*Comic, error) {
 	comic := new(Comic)
 	var columns []string
 	for _, c := range comic.Columns() {
@@ -54,14 +54,14 @@ func (m *User) Comics(startedAt, endedAt time.Time) ([]*Comic, error) {
 		JOIN users ON users.id = user_series.user_id
 		WHERE
 			users.id = $1 AND
-			comics.created_at BETWEEN $2 AND $3`,
+			comics.created_at >= $2`,
 		strings.Join(columns, ", "))
 
 	if cfg.Debug {
 		log.Printf("DEBUG: %s", query)
 	}
 
-	rows, err := db.Query(query, m.ID, startedAt, endedAt)
+	rows, err := db.Query(query, m.ID, earliestAt)
 	if err != nil {
 		return nil, err
 	}

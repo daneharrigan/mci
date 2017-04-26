@@ -52,10 +52,8 @@ func handle(user *db.User) {
 	defer wg.Done()
 
 	now := time.Now()
-	startedAt := findDate(now, time.Monday, -24)
-	endedAt := findDate(now, time.Sunday, 24)
-
-	comics, err := user.Comics(startedAt, endedAt)
+	earliestAt := findDate(now, time.Monday, -24)
+	comics, err := user.Comics(earliestAt)
 	if err != nil {
 		log.Printf("fn=Comics error=%q", err)
 		return
