@@ -1,0 +1,11 @@
+#!/bin/bash
+
+DAY=$(date +%a)
+MONDAY="Mon"
+
+if [[ "$DAY" == "$MONDAY" ]]; then
+  bin/mci-scanner
+  bin/mci-notifier
+else
+  echo "Today is $DAY. Skipping."
+fi
