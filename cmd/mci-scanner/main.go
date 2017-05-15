@@ -5,7 +5,6 @@ import (
 	"os"
 	"runtime"
 	"sync"
-	"time"
 
 	"github.com/daneharrigan/mci/config"
 	"github.com/daneharrigan/mci/db"
@@ -24,8 +23,6 @@ func init() {
 }
 
 func main() {
-	now := time.Now()
-
 	ch := make(chan scanner.Result)
 	defer close(ch)
 
@@ -35,16 +32,6 @@ func main() {
 
 	s := scanner.New(cfg.URL, cfg.PublicKey, cfg.PrivateKey)
 	for r := range s.Scan() {
-		releasedAt, err := scanner.FindUnlimitedDate(r.Dates)
-		if err != nil {
-			log.Printf("fn=FindUnlimitedDate error=%q", err)
-			continue
-		}
-
-		if releasedAt.After(now) {
-			continue
-		}
-
 		wg.Add(1)
 		ch <- r
 	}
